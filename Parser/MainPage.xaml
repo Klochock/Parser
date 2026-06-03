@@ -1,0 +1,80 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:ff="clr-namespace:FFImageLoading.Maui;assembly=FFImageLoading.Maui"
+             xmlns:converters="clr-namespace:Parser.Converters"
+             x:Class="Parser.MainPage"
+             Title="Расписание">
+
+    <ContentPage.Resources>
+        <ResourceDictionary>
+            <converters:IsNotNullConverter x:Key="IsNotNull" />
+        </ResourceDictionary>
+    </ContentPage.Resources>
+
+    <Grid>
+        <ff:CachedImage Source="image5.gif" Aspect="AspectFill" />
+
+        <Grid RowDefinitions="Auto, Auto, Auto, *, Auto" Padding="10">
+
+            <Picker Title="Выберите филиал"
+                    ItemsSource="{Binding Branches}"
+                    SelectedItem="{Binding SelectedBranch}"
+                    ItemDisplayBinding="{Binding Name}"
+                    BackgroundColor="#CCFFFFFF" />
+
+            <Picker Grid.Row="1"
+                    Title="Выберите год"
+                    ItemsSource="{Binding Years}"
+                    SelectedItem="{Binding SelectedYear}"
+                    ItemDisplayBinding="{Binding Name}"
+                    IsEnabled="{Binding SelectedBranch, Converter={StaticResource IsNotNull}}"
+                    BackgroundColor="#CCFFFFFF" />
+
+            <Picker Grid.Row="2"
+                    Title="Выберите группу"
+                    ItemsSource="{Binding Groups}"
+                    SelectedItem="{Binding SelectedGroup}"
+                    ItemDisplayBinding="{Binding Name}"
+                    IsEnabled="{Binding SelectedYear, Converter={StaticResource IsNotNull}}"
+                    BackgroundColor="#CCFFFFFF" />
+
+            <ScrollView Grid.Row="3">
+                <ListView ItemsSource="{Binding AllWeekSchedule}" HasUnevenRows="True">
+                    <ListView.ItemTemplate>
+                        <DataTemplate>
+                            <ViewCell>
+                                <StackLayout Padding="10" Spacing="5">
+                                    <Label Text="{Binding Date}" FontSize="22" FontAttributes="Bold" TextColor="Black" HorizontalOptions="Center"/>
+                                    <Label Text="{Binding DayOfWeek}" FontSize="16" TextColor="Gray" HorizontalOptions="Center"/>
+                                    <BoxView Color="Gray" HeightRequest="1" Margin="0,5,0,5"/>
+                                    <ListView ItemsSource="{Binding Schedules}" HasUnevenRows="True">
+                                        <ListView.ItemTemplate>
+                                            <DataTemplate>
+                                                <ViewCell>
+                                                    <StackLayout Padding="5" Spacing="3">
+                                                        <Label Text="{Binding TimeLesson}" FontSize="16" FontAttributes="Bold"/>
+                                                        <Label Text="{Binding Discipline}" FontSize="18" FontAttributes="Bold"/>
+                                                        <Label Text="{Binding Type}" FontSize="14" TextColor="DarkGreen"/>
+                                                        <Label Text="{Binding Employee}" FontSize="14" TextColor="DarkBlue"/>
+                                                        <Label Text="{Binding Classroom, StringFormat='Ауд. {0}'}" FontSize="14"/>
+                                                        <Label Text="{Binding Group}" FontSize="12" TextColor="Gray"/>
+                                                    </StackLayout>
+                                                </ViewCell>
+                                            </DataTemplate>
+                                        </ListView.ItemTemplate>
+                                    </ListView>
+                                </StackLayout>
+                            </ViewCell>
+                        </DataTemplate>
+                    </ListView.ItemTemplate>
+                </ListView>
+            </ScrollView>
+
+            <StackLayout Grid.Row="4" Orientation="Horizontal" HorizontalOptions="Center" Spacing="30" Padding="0,10">
+                <Button Text="Назад" Command="{Binding LoadPreviousWeekScheduleCommand}" WidthRequest="120" HeightRequest="40"/>
+                <Button Text="Далее" Command="{Binding LoadNextWeekScheduleCommand}" WidthRequest="120" HeightRequest="40"/>
+            </StackLayout>
+        </Grid>
+    </Grid>
+</ContentPage>
